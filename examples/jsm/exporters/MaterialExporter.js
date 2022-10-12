@@ -20,7 +20,14 @@ class MaterialExporter {
 		input.traverse(obj => {
 			if (obj instanceof Mesh) {
 				if (obj.material != null) {
-					output["meshes"][obj.name] = obj.material.name;
+					output["meshes"][obj.name] = {
+						"material": obj.material.name,
+						"castShadow": obj.castShadow,
+						"receiveShadow": obj.receiveShadow,
+						"visible": obj.visible,
+						"frustumCulled": obj.frustumCulled,
+						"renderOrder": obj.renderOrder
+					}
 					output["materials"][obj.material.name] = obj.material.toJSON();
 
 					let outputMaterial = output["materials"][obj.material.name];

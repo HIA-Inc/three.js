@@ -169,6 +169,28 @@ function SidebarMaterial( editor ) {
 
 	const materialMap = new SidebarMaterialMapProperty( editor, 'map', strings.getKey( 'sidebar/material/map' ) );
 	container.add( materialMap );
+	
+	// map format
+	
+	const mapFormatOptions = {
+		1021: 'AlphaFormat',
+		1022: 'RGBFormat',
+		1023: 'RGBAFormat',
+		1024: 'LuminanceFormat',
+		1025: 'LuminanceAlphaFormat',
+		1026: 'DepthFormat',
+		1026: 'RGBEFormat',
+		1027: 'DepthStencilFormat',
+		1028: 'RedFormat',
+		1029: 'RedIntegerFormat',
+		1030: 'RGFormat',
+		1031: 'RGIntegerFormat',
+		1032: 'RGBIntegerFormat',
+		1033: 'RGBAIntegerFormat'
+	};
+
+	const materialMapFormat = new SidebarMaterialConstantProperty( editor, 'mapFormat', strings.getKey( 'sidebar/material/mapFormat' ), mapFormatOptions );
+	container.add( materialMapFormat );
 
 	// specular map
 

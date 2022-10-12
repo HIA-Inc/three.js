@@ -38,6 +38,11 @@ function SidebarMaterialConstantProperty( editor, property, name, options ) {
 			constant.setValue( material[ property ] );
 			container.setDisplay( '' );
 
+		} else if ( property === 'mapFormat' && material.map !== null) {
+			
+			constant.setValue( material.map.format );
+			container.setDisplay( '' );
+
 		} else {
 
 			container.setDisplay( 'none' );

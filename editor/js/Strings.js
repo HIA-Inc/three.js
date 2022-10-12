@@ -281,6 +281,7 @@ function Strings( config ) {
 			'sidebar/material/depthtest': 'Depth Test',
 			'sidebar/material/depthwrite': 'Depth Write',
 			'sidebar/material/wireframe': 'Wireframe',
+			'sidebar/material/mapFormat': 'Map Format',
 
 			'sidebar/script': 'Script',
 			'sidebar/script/new': 'New',

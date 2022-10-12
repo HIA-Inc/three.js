@@ -29,9 +29,18 @@ class SetMaterialValueCommand extends Command {
 
 	execute() {
 
-		this.material[ this.attributeName ] = this.newValue;
-		this.material.needsUpdate = true;
+		if (this.attributeName == 'mapFormat') {
 
+			this.material.map.format = this.newValue;
+			this.material.map.needsUpdate = true;
+
+		} else {
+
+			this.material[ this.attributeName ] = this.newValue;
+
+		}
+
+		this.material.needsUpdate = true;
 		this.editor.signals.objectChanged.dispatch( this.object );
 		this.editor.signals.materialChanged.dispatch( this.material );
 
