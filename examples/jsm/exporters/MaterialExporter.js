@@ -26,25 +26,27 @@ class MaterialExporter {
 					let outputMaterial = output["materials"][obj.material.name];
 
 					let textureIdBaseColor = outputMaterial["map"];
-					let imageIdBaseColor = outputMaterial["textures"].find(value => value["uuid"] == textureIdBaseColor)?.image;
+					let imageIdBaseColor = outputMaterial["textures"]?.find(value => value["uuid"] == textureIdBaseColor)?.image;
 
 					let textureIdEmissive = outputMaterial["emissiveMap"];
-					let imageIdEmissive = outputMaterial["textures"].find(value => value["uuid"] == textureIdEmissive)?.image;
+					let imageIdEmissive = outputMaterial["textures"]?.find(value => value["uuid"] == textureIdEmissive)?.image;
 
 					let textureIdNormal = outputMaterial["normalMap"];
-					let imageIdNormal = outputMaterial["textures"].find(value => value["uuid"] == textureIdNormal)?.image;
+					let imageIdNormal = outputMaterial["textures"]?.find(value => value["uuid"] == textureIdNormal)?.image;
 
 					let textureIdOcclusion = outputMaterial["aoMap"];
-					let imageIdOcclusion = outputMaterial["textures"].find(value => value["uuid"] == textureIdOcclusion)?.image;
+					let imageIdOcclusion = outputMaterial["textures"]?.find(value => value["uuid"] == textureIdOcclusion)?.image;
 
-					outputMaterial["images"] = outputMaterial["images"].filter(value => {
-						return (
-							value["uuid"] != imageIdBaseColor &&
-							value["uuid"] != imageIdEmissive &&
-							value["uuid"] != imageIdNormal &&
-							value["uuid"] != imageIdOcclusion
-						);
-					});
+					if (outputMaterial["images"]) {
+						outputMaterial["images"] = outputMaterial["images"].filter(value => {
+							return (
+								value["uuid"] != imageIdBaseColor &&
+								value["uuid"] != imageIdEmissive &&
+								value["uuid"] != imageIdNormal &&
+								value["uuid"] != imageIdOcclusion
+							);
+						});
+					}
 
 					for (let texture of outputMaterial["textures"] ?? []) {
 						if (
@@ -55,6 +57,10 @@ class MaterialExporter {
 						) {
 							texture["image"] = null;
 						}
+					}
+
+					if (outputMaterial["opacity"] == null) {
+						outputMaterial["opacity"] = 1.0;
 					}
 				}
 			}
