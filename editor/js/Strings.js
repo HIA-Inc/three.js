@@ -123,6 +123,8 @@ function Strings( config ) {
 			'sidebar/object/shadowRadius': 'Shadow Radius',
 			'sidebar/object/cast': 'cast',
 			'sidebar/object/receive': 'receive',
+			'sidebar/object/castHighPriority': 'Cast High Priority',
+			'sidebar/object/receiveHighPriority': 'Receive High Priority',
 			'sidebar/object/visible': 'Visible',
 			'sidebar/object/frustumcull': 'Frustum Cull',
 			'sidebar/object/renderorder': 'Render Order',

@@ -23,7 +23,9 @@ class MaterialExporter {
 					output["meshes"][obj.name] = {
 						"material": obj.material.name,
 						"castShadow": obj.castShadow,
+						"castShadowHighPriority": obj.castShadowHighPriority,
 						"receiveShadow": obj.receiveShadow,
+						"receiveShadowHighPriority": obj.receiveShadowHighPriority,
 						"visible": obj.visible,
 						"frustumCulled": obj.frustumCulled,
 						"renderOrder": obj.renderOrder

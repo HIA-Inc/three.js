@@ -6582,6 +6582,9 @@ class Object3D extends EventDispatcher {
 		this.castShadow = false;
 		this.receiveShadow = false;
 
+		this.castShadowHighPriority = false;
+		this.receiveShadowHighPriority = false;
+
 		this.frustumCulled = true;
 		this.renderOrder = 0;
 
@@ -7145,6 +7148,8 @@ class Object3D extends EventDispatcher {
 		if ( this.visible === false ) object.visible = false;
 		if ( this.frustumCulled === false ) object.frustumCulled = false;
 		if ( this.renderOrder !== 0 ) object.renderOrder = this.renderOrder;
+		if ( this.castShadowHighPriority === true ) object.castShadowHighPriority = true;
+		if ( this.receiveShadowHighPriority === true ) object.receiveShadowHighPriority = true;
 		if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
 		object.layers = this.layers.mask;
@@ -7368,6 +7373,9 @@ class Object3D extends EventDispatcher {
 
 		this.castShadow = source.castShadow;
 		this.receiveShadow = source.receiveShadow;
+		
+		this.castShadowHighPriority = source.castShadowHighPriority;
+		this.receiveShadowHighPriority = source.receiveShadowHighPriority;
 
 		this.frustumCulled = source.frustumCulled;
 		this.renderOrder = source.renderOrder;
@@ -41353,6 +41361,9 @@ class ObjectLoader extends Loader {
 
 		if ( data.castShadow !== undefined ) object.castShadow = data.castShadow;
 		if ( data.receiveShadow !== undefined ) object.receiveShadow = data.receiveShadow;
+		
+		if ( data.castShadowHighPriority !== undefined ) object.castShadowHighPriority = data.castShadowHighPriority;
+		if ( data.receiveShadowHighPriority !== undefined ) object.receiveShadowHighPriority = data.receiveShadowHighPriority;
 
 		if ( data.shadow ) {
 

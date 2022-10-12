@@ -990,6 +990,9 @@ class ObjectLoader extends Loader {
 
 		if ( data.castShadow !== undefined ) object.castShadow = data.castShadow;
 		if ( data.receiveShadow !== undefined ) object.receiveShadow = data.receiveShadow;
+		
+		if ( data.castShadowHighPriority !== undefined ) object.castShadowHighPriority = data.castShadowHighPriority;
+		if ( data.receiveShadowHighPriority !== undefined ) object.receiveShadowHighPriority = data.receiveShadowHighPriority;
 
 		if ( data.shadow ) {
 

@@ -296,6 +296,24 @@ function SidebarObject( editor ) {
 
 	container.add( objectShadowRow );
 
+	// shadow priority
+	
+	var objectShadowCastPriorityRow = new UIRow();
+	var objectShadowCastPriority = new UICheckbox().onChange( update );
+
+	objectShadowCastPriorityRow.add( new UIText( strings.getKey( 'sidebar/object/castHighPriority' ) ).setWidth( '90px' ) );
+	objectShadowCastPriorityRow.add( objectShadowCastPriority );
+
+	container.add( objectShadowCastPriorityRow );
+
+	var objectShadowReceivePriorityRow = new UIRow();
+	var objectShadowReceivePriority = new UICheckbox().onChange( update );
+
+	objectShadowReceivePriorityRow.add( new UIText( strings.getKey( 'sidebar/object/receiveHighPriority' ) ).setWidth( '90px' ) );
+	objectShadowReceivePriorityRow.add( objectShadowReceivePriority );
+
+	container.add( objectShadowReceivePriorityRow );
+
 	// shadow bias
 
 	var objectShadowBiasRow = new UIRow();
@@ -543,6 +561,18 @@ function SidebarObject( editor ) {
 
 				if ( object.material !== undefined ) object.material.needsUpdate = true;
 				editor.execute( new SetValueCommand( editor, object, 'receiveShadow', objectReceiveShadow.getValue() ) );
+
+			}
+
+			if ( object.castShadowHighPriority !== objectShadowCastPriority.getValue() ) {
+
+				editor.execute( new SetValueCommand( editor, object, 'castShadowHighPriority', objectShadowCastPriority.getValue() ) );
+
+			}
+
+			if ( object.receiveShadowHighPriority !== objectShadowReceivePriority.getValue() ) {
+
+				editor.execute( new SetValueCommand( editor, object, 'receiveShadowHighPriority', objectShadowReceivePriority.getValue() ) );
 
 			}
 
@@ -820,6 +850,8 @@ function SidebarObject( editor ) {
 
 		}
 
+		objectShadowCastPriority.setValue( object.castShadowHighPriority ?? false);
+		objectShadowReceivePriority.setValue( object.receiveShadowHighPriority ?? false);
 		objectVisible.setValue( object.visible );
 		objectFrustumCulled.setValue( object.frustumCulled );
 		objectRenderOrder.setValue( object.renderOrder );
