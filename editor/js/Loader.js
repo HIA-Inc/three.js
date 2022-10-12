@@ -219,6 +219,10 @@ function Loader( editor ) {
 					var loader = new FBXLoader( manager );
 					var object = loader.parse( contents );
 
+					object.traverse(function(obj) {
+						obj.frustumCulled = false;
+					});				
+
 					editor.execute( new AddObjectCommand( editor, object ) );
 
 				}, false );
@@ -244,6 +248,10 @@ function Loader( editor ) {
 
 						var scene = result.scene;
 						scene.name = filename;
+
+						scene.traverse(function(obj) {
+							obj.frustumCulled = false;
+						});
 
 						scene.animations.push( ...result.animations );
 						editor.execute( new AddObjectCommand( editor, scene ) );
@@ -284,6 +292,10 @@ function Loader( editor ) {
 
 						var scene = result.scene;
 						scene.name = filename;
+
+						scene.traverse(function(obj) {
+							obj.frustumCulled = false;
+						});
 
 						scene.animations.push( ...result.animations );
 						editor.execute( new AddObjectCommand( editor, scene ) );
