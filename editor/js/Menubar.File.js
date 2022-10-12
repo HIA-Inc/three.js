@@ -282,6 +282,28 @@ function MenubarFile( editor ) {
 	} );
 	options.add( option );
 
+	// Export Material
+
+	var option = new UIRow();
+	option.setClass( 'option' );
+	option.setTextContent( strings.getKey( 'menubar/file/export/material' ) );
+	option.onClick( async function () {
+
+		let input = editor.selected ?? editor.scene;
+		
+		var { MaterialExporter } = await import( '../../examples/jsm/exporters/MaterialExporter.js' );
+
+		var exporter = new MaterialExporter();
+
+		let result = JSON.stringify( exporter.parse( input ), null, 2 );
+		
+		let filename = input.name.replace(/\.[^/.]+$/, "");
+		
+		saveString( result, filename + ".mat");
+
+	} );
+	options.add( option );
+
 	// Export OBJ
 
 	var option = new UIRow();

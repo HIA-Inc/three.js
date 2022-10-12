@@ -16,6 +16,7 @@ function Strings( config ) {
 			'menubar/file/export/drc': 'Export DRC',
 			'menubar/file/export/glb': 'Export GLB',
 			'menubar/file/export/gltf': 'Export GLTF',
+			'menubar/file/export/material': 'Export Material',
 			'menubar/file/export/obj': 'Export OBJ',
 			'menubar/file/export/ply': 'Export PLY',
 			'menubar/file/export/ply_binary': 'Export PLY (Binary)',
