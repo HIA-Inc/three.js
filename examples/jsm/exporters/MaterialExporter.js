@@ -78,6 +78,44 @@ class MaterialExporter {
 		return output;
 	}
 
+	convertToZip(materialContents, materialFileName) {
+		return new Promise((resolve, reject) => {
+			let zip = new JSZip();
+			let imgFolder = zip.folder("images");
+	
+			let imageCounter = 1;
+			let materialNames = Object.keys(materialContents.materials).sort();
+			for (let materialName of materialNames) {
+				let material = materialContents.materials[materialName];
+				for (let image of material["images"]) {
+					let imageUrlElements = image.url.split(",");
+					if (imageUrlElements.length == 2) {
+						let imageElements = image.url.split(",");
+
+						let imageFileName = "image" + imageCounter;
+						let imageInfoElements = imageElements[0].split(";");
+						if (imageInfoElements[0].startsWith("data:image/")) {
+							let extension = imageInfoElements[0].substring(11, imageInfoElements[0].length);
+							imageFileName += "." + extension;
+						}
+						
+						imgFolder.file(imageFileName, imageElements[1], { base64: true });
+
+						image.url = "currentDirectory:" + imageFileName;
+						imageCounter++;
+					}
+				}
+			}
+	
+			zip.file(materialFileName, JSON.stringify(materialContents, null, 2));
+	
+			zip.generateAsync({type:"blob"})
+			.then(function(content) {
+				resolve(content);
+			});
+		});
+	}
+
 }
 
 export { MaterialExporter };

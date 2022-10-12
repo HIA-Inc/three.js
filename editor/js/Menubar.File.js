@@ -304,6 +304,30 @@ function MenubarFile( editor ) {
 	} );
 	options.add( option );
 
+	// Export Material (zip)
+
+	var option = new UIRow();
+	option.setClass( 'option' );
+	option.setTextContent( strings.getKey( 'menubar/file/export/materialZip' ) );
+	option.onClick( async function () {
+
+		let input = editor.selected ?? editor.scene;
+		
+		var { MaterialExporter } = await import( '../../examples/jsm/exporters/MaterialExporter.js' );
+
+		var exporter = new MaterialExporter();
+		
+		let contents = exporter.parse(input);
+
+		let filename = input.name.replace(/\.[^/.]+$/, "");
+
+		exporter.convertToZip(contents, filename + ".mat").then((content) => {
+			save(content, filename + ".zip");
+		});
+
+	} );
+	options.add( option );
+	
 	// Export OBJ
 
 	var option = new UIRow();
