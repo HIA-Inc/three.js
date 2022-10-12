@@ -23,10 +23,38 @@ class MaterialExporter {
 					output["meshes"][obj.name] = obj.material.name;
 					output["materials"][obj.material.name] = obj.material.toJSON();
 
-					delete output["materials"][obj.material.name]["images"];
+					let outputMaterial = output["materials"][obj.material.name];
 
-					for (let texture of output["materials"][obj.material.name]["textures"] ?? []) {
-						texture["image"] = null;
+					let textureIdBaseColor = outputMaterial["map"];
+					let imageIdBaseColor = outputMaterial["textures"].find(value => value["uuid"] == textureIdBaseColor)?.image;
+
+					let textureIdEmissive = outputMaterial["emissiveMap"];
+					let imageIdEmissive = outputMaterial["textures"].find(value => value["uuid"] == textureIdEmissive)?.image;
+
+					let textureIdNormal = outputMaterial["normalMap"];
+					let imageIdNormal = outputMaterial["textures"].find(value => value["uuid"] == textureIdNormal)?.image;
+
+					let textureIdOcclusion = outputMaterial["aoMap"];
+					let imageIdOcclusion = outputMaterial["textures"].find(value => value["uuid"] == textureIdOcclusion)?.image;
+
+					outputMaterial["images"] = outputMaterial["images"].filter(value => {
+						return (
+							value["uuid"] != imageIdBaseColor &&
+							value["uuid"] != imageIdEmissive &&
+							value["uuid"] != imageIdNormal &&
+							value["uuid"] != imageIdOcclusion
+						);
+					});
+
+					for (let texture of outputMaterial["textures"] ?? []) {
+						if (
+							texture["uuid"] == textureIdBaseColor ||
+							texture["uuid"] == textureIdEmissive ||
+							texture["uuid"] == textureIdNormal ||
+							texture["uuid"] == textureIdOcclusion
+						) {
+							texture["image"] = null;
+						}
 					}
 				}
 			}
