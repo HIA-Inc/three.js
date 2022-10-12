@@ -400,10 +400,6 @@ function SidebarMaterial( editor ) {
 
 			materialSlotRow.setDisplay( '' );
 
-			if ( material.length === 0 ) return;
-
-			material = material[ currentMaterialSlot ];
-
 		} else {
 
 			materialSlotRow.setDisplay( 'none' );
