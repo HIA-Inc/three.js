@@ -68,6 +68,38 @@ function MenubarFile( editor ) {
 	} );
 	options.add( option );
 
+	// Import Material
+
+	let formMat = document.createElement( 'form' );
+	formMat.style.display = 'none';
+	document.body.appendChild( formMat );
+
+	let fileInputMat = document.createElement( 'input' );
+	fileInputMat.multiple = false;
+	fileInputMat.type = 'file';
+	fileInputMat.accept = ".mat"
+	fileInputMat.addEventListener( 'change', async function () {
+
+		let manager = new THREE.LoadingManager();
+		let { MaterialFileLoader } = await import( '../../examples/jsm/loaders/MaterialFileLoader.js' );
+		let materialFileLoader = new MaterialFileLoader(manager);
+		materialFileLoader.loadFile(fileInputMat.files[0], editor.scene);
+
+		form.reset();
+
+	} );
+	form.appendChild( fileInputMat );
+
+	var option = new UIRow();
+	option.setClass( 'option' );
+	option.setTextContent( strings.getKey( 'menubar/file/import/material' ) );
+	option.onClick( function () {
+
+		fileInputMat.click();
+
+	} );
+	options.add( option );
+
 	//
 
 	options.add( new UIHorizontalRule() );
@@ -291,9 +323,9 @@ function MenubarFile( editor ) {
 
 		let input = editor.selected ?? editor.scene;
 		
-		var { MaterialExporter } = await import( '../../examples/jsm/exporters/MaterialExporter.js' );
+		var { MaterialFileExporter } = await import( '../../examples/jsm/exporters/MaterialFileExporter.js' );
 
-		var exporter = new MaterialExporter();
+		var exporter = new MaterialFileExporter();
 
 		let result = JSON.stringify( exporter.parse( input ), null, 2 );
 		
@@ -313,9 +345,9 @@ function MenubarFile( editor ) {
 
 		let input = editor.selected ?? editor.scene;
 		
-		var { MaterialExporter } = await import( '../../examples/jsm/exporters/MaterialExporter.js' );
+		var { MaterialFileExporter } = await import( '../../examples/jsm/exporters/MaterialFileExporter.js' );
 
-		var exporter = new MaterialExporter();
+		var exporter = new MaterialFileExporter();
 		
 		let contents = exporter.parse(input);
 

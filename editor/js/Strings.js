@@ -9,6 +9,7 @@ function Strings( config ) {
 			'menubar/file': 'File',
 			'menubar/file/new': 'New',
 			'menubar/file/import': 'Import',
+			'menubar/file/import/material': 'Import Material',
 			'menubar/file/export/geometry': 'Export Geometry',
 			'menubar/file/export/object': 'Export Object',
 			'menubar/file/export/scene': 'Export Scene',
