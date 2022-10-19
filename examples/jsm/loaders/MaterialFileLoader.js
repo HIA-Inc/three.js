@@ -11,12 +11,70 @@ class MaterialFileLoader extends Loader {
 	}
 
 	loadFile(materialFile, object) {
-		let fileReader = new FileReader();
-		fileReader.addEventListener("load", () => {
-			let json = JSON.parse(fileReader.result);
-			this.parse(json, object);
-		}, false);
-		fileReader.readAsText(materialFile);
+		let extension = materialFile.name.split('.').pop();
+
+		if (extension == "zip") {
+			let zip = new JSZip();
+			zip.loadAsync(materialFile).then((contents) => {
+				let files = Object.entries(contents.files).map(entry => entry[1]);
+				let matFiles = files.filter(file => !file.dir && file.name.split('.').pop() == "mat");
+
+				if (matFiles.length == 1) {
+					let matFile = matFiles[0];
+
+					matFile.async('string').then((data)=> {
+						let matData = JSON.parse(data);
+						let imageFiles = files.filter(file => !file.dir && file.name.startsWith("images/"));
+
+						let imagesBase64Promise = imageFiles.map((imageFile) => {
+							return new Promise(resolve => {
+								imageFile.async('base64').then(imageBase64 => {
+									resolve({
+										"name": imageFile.name.replace("images/", ""),
+										"base64Url": this.getUrlPrefix(imageFile.name) + imageBase64
+									});
+								});
+							});
+						});
+
+						Promise.all(imagesBase64Promise).then((imagesBase64) => {
+							let json = CustomMaterialLoader.preprocessMaterialData(matData, imagesBase64);
+							this.parse(json, object);
+						});
+					});
+				}
+				else if (matFiles.length > 1) {
+					console.error("The material zip file should not contain more than 1 mat file");
+				}
+				else {
+					console.error("The material zip doesn't contain a .mat file");
+				}
+			});
+		}
+		else {
+			let fileReader = new FileReader();
+			fileReader.addEventListener("load", () => {
+				let json = JSON.parse(fileReader.result);
+				this.parse(json, object);
+			}, false);
+			fileReader.readAsText(materialFile);
+		}
+	}
+	
+	getUrlPrefix(imageFileName) {
+		let extension = imageFileName.split('.').pop();
+		let mimeType = "image/";
+		if (extension == "jpg") {
+			mimeType += "jpeg";
+		}
+		else if (extension == "tif") {
+			mimeType += "tiff";
+		}
+		else {
+			mimeType += extension;
+		}
+		
+		return "data:" + mimeType + ";base64,";
 	}
 
 	parse(materialJson, object) {

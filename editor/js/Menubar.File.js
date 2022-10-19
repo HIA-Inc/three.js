@@ -77,7 +77,7 @@ function MenubarFile( editor ) {
 	let fileInputMat = document.createElement( 'input' );
 	fileInputMat.multiple = false;
 	fileInputMat.type = 'file';
-	fileInputMat.accept = ".mat"
+	fileInputMat.accept = ".mat, .zip"
 	fileInputMat.addEventListener( 'change', async function () {
 
 		let manager = new THREE.LoadingManager();

@@ -1,14 +1,14 @@
 export class CustomMaterialLoader {
   constructor() {}
 
-  static preprocessMaterialData(data, imagesDirectoryUrl) {
+  static preprocessMaterialData(data, imagesBase64) {
     for (let materialName in data.materials) {
       let material = data.materials[materialName];
       if (material["images"] != null) {
         for (let image of material["images"]) {
           if (image.url.startsWith("currentDirectory:")) {
-            image.url = image.url.replace("currentDirectory:", "");
-            image.url = imagesDirectoryUrl + "/images/" + image.url;
+            let fileName = image.url.replace("currentDirectory:", "");
+            image.url = imagesBase64.find(entry => entry.name == fileName).base64Url;
           }
         }
       }
