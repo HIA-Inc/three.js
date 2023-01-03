@@ -23,7 +23,7 @@ function SidebarMaterialMapProperty( editor, property, name ) {
 
 	let intensity;
 
-	if ( property === 'aoMap' ) {
+	if ( property === 'aoMap' || property === 'envMap') {
 
 		intensity = new UINumber().setWidth( '30px' ).onChange( onIntensityChange );
 		container.add( intensity );
