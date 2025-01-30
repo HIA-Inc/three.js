@@ -12,11 +12,20 @@
 			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - effects - stereo. skybox by <a href="http://www.zfight.com/" target="_blank" rel="noopener">Jochum Skoglund</a>
 		</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
-			import { StereoEffect } from './jsm/effects/StereoEffect.js';
+			import { StereoEffect } from 'three/addons/effects/StereoEffect.js';
 
 			let container, camera, scene, renderer, effect;
 
@@ -30,7 +39,6 @@
 			document.addEventListener( 'mousemove', onDocumentMouseMove );
 
 			init();
-			animate();
 
 			function init() {
 
@@ -71,6 +79,7 @@
 
 				renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setAnimationLoop( animate );
 				container.appendChild( renderer.domElement );
 
 				effect = new StereoEffect( renderer );
@@ -104,14 +113,6 @@
 			//
 
 			function animate() {
-
-				requestAnimationFrame( animate );
-
-				render();
-
-			}
-
-			function render() {
 
 				const timer = 0.0001 * Date.now();
 

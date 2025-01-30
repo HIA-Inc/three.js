@@ -14,15 +14,23 @@
 			Created by <a href="https://orfleisher.com" target="_blank" rel="noopener">@juniorxsound</a>. Panorama from <a href="https://krpano.com/examples/?depthmap" target="_blank" rel="noopener">krpano</a>.
 		</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
-			import { VRButton } from './jsm/webxr/VRButton.js';
+			import * as THREE from 'three';
+			import { VRButton } from 'three/addons/webxr/VRButton.js';
 
 			let camera, scene, renderer, sphere, clock;
 
 			init();
-			animate();
 
 			function init() {
 
@@ -33,13 +41,13 @@
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0x101010 );
 
-				const light = new THREE.AmbientLight( 0xffffff, 1 );
+				const light = new THREE.AmbientLight( 0xffffff, 3 );
 				scene.add( light );
 
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 2000 );
 				scene.add( camera );
 
-				// Create the panoramic sphere geometery
+				// Create the panoramic sphere geometry
 				const panoSphereGeo = new THREE.SphereGeometry( 6, 256, 256 );
 
 				// Create the panoramic sphere material
@@ -57,6 +65,7 @@
 
 				loader.load( './textures/kandao3.jpg', function ( texture ) {
 
+					texture.colorSpace = THREE.SRGBColorSpace;
 					texture.minFilter = THREE.NearestFilter;
 					texture.generateMipmaps = false;
 					sphere.material.map = texture;
@@ -81,6 +90,7 @@
 				renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
 				renderer.xr.enabled = true;
 				renderer.xr.setReferenceSpaceType( 'local' );
 				container.appendChild( renderer.domElement );
@@ -103,12 +113,6 @@
 			}
 
 			function animate() {
-
-				renderer.setAnimationLoop( render );
-
-			}
-
-			function render() {
 
 				// If we are not presenting move the camera a little so the effect is visible
 

@@ -21,36 +21,40 @@
 			animation from <a href="http://mocap.cs.cmu.edu/">http://mocap.cs.cmu.edu/</a>
 		</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
-			import { OrbitControls } from './jsm/controls/OrbitControls.js';
-			import { BVHLoader } from './jsm/loaders/BVHLoader.js';
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+			import { BVHLoader } from 'three/addons/loaders/BVHLoader.js';
 
 			const clock = new THREE.Clock();
 
 			let camera, controls, scene, renderer;
-			let mixer, skeletonHelper;
+			let mixer;
 
 			init();
-			animate();
 
 			const loader = new BVHLoader();
-			loader.load( "models/bvh/pirouette.bvh", function ( result ) {
+			loader.load( 'models/bvh/pirouette.bvh', function ( result ) {
 
-				skeletonHelper = new THREE.SkeletonHelper( result.skeleton.bones[ 0 ] );
-				skeletonHelper.skeleton = result.skeleton; // allow animation mixer to bind to THREE.SkeletonHelper directly
+				const skeletonHelper = new THREE.SkeletonHelper( result.skeleton.bones[ 0 ] );
 
-				const boneContainer = new THREE.Group();
-				boneContainer.add( result.skeleton.bones[ 0 ] );
-
+				scene.add( result.skeleton.bones[ 0 ] );
 				scene.add( skeletonHelper );
-				scene.add( boneContainer );
 
 				// play animation
-				mixer = new THREE.AnimationMixer( skeletonHelper );
-				mixer.clipAction( result.clip ).setEffectiveWeight( 1.0 ).play();
+				mixer = new THREE.AnimationMixer( result.skeleton.bones[ 0 ] );
+				mixer.clipAction( result.clip ).play();
 
 			} );
 
@@ -68,6 +72,7 @@
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
 				document.body.appendChild( renderer.domElement );
 
 				controls = new OrbitControls( camera, renderer.domElement );
@@ -88,8 +93,6 @@
 			}
 
 			function animate() {
-
-				requestAnimationFrame( animate );
 
 				const delta = clock.getDelta();
 

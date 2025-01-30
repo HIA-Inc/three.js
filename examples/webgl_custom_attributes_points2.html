@@ -49,13 +49,22 @@
 
 		</script>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
-			import Stats from './jsm/libs/stats.module.js';
+			import Stats from 'three/addons/libs/stats.module.js';
 
-			import * as BufferGeometryUtils from './jsm/utils/BufferGeometryUtils.js';
+			import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 			let renderer, scene, camera, stats;
 			let sphere, length1;
@@ -64,7 +73,6 @@
 			const HEIGHT = window.innerHeight;
 
 			init();
-			animate();
 
 			function init() {
 
@@ -89,7 +97,7 @@
 				sphereGeometry = BufferGeometryUtils.mergeVertices( sphereGeometry );
 				boxGeometry = BufferGeometryUtils.mergeVertices( boxGeometry );
 
-				const combinedGeometry = BufferGeometryUtils.mergeBufferGeometries( [ sphereGeometry, boxGeometry ] );
+				const combinedGeometry = BufferGeometryUtils.mergeGeometries( [ sphereGeometry, boxGeometry ] );
 				const positionAttribute = combinedGeometry.getAttribute( 'position' );
 
 				const colors = [];
@@ -153,6 +161,7 @@
 				renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( WIDTH, HEIGHT );
+				renderer.setAnimationLoop( animate );
 
 				const container = document.getElementById( 'container' );
 				container.appendChild( renderer.domElement );
@@ -241,8 +250,6 @@
 			}
 
 			function animate() {
-
-				requestAnimationFrame( animate );
 
 				render();
 				stats.update();

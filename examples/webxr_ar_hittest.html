@@ -12,10 +12,19 @@
 			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> ar - hit test<br/>(Chrome Android 81+)
 		</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
-			import { ARButton } from './jsm/webxr/ARButton.js';
+			import * as THREE from 'three';
+			import { ARButton } from 'three/addons/webxr/ARButton.js';
 
 			let container;
 			let camera, scene, renderer;
@@ -27,7 +36,6 @@
 			let hitTestSourceRequested = false;
 
 			init();
-			animate();
 
 			function init() {
 
@@ -38,7 +46,7 @@
 
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );
 
-				const light = new THREE.HemisphereLight( 0xffffff, 0xbbbbff, 1 );
+				const light = new THREE.HemisphereLight( 0xffffff, 0xbbbbff, 3 );
 				light.position.set( 0.5, 1, 0.25 );
 				scene.add( light );
 
@@ -47,6 +55,7 @@
 				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
 				renderer.xr.enabled = true;
 				container.appendChild( renderer.domElement );
 
@@ -64,7 +73,7 @@
 
 						const material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
 						const mesh = new THREE.Mesh( geometry, material );
-						mesh.position.setFromMatrixPosition( reticle.matrix );
+						reticle.matrix.decompose( mesh.position, mesh.quaternion, mesh.scale );
 						mesh.scale.y = Math.random() * 2 + 1;
 						scene.add( mesh );
 
@@ -101,13 +110,7 @@
 
 			//
 
-			function animate() {
-
-				renderer.setAnimationLoop( render );
-
-			}
-
-			function render( timestamp, frame ) {
+			function animate( timestamp, frame ) {
 
 				if ( frame ) {
 

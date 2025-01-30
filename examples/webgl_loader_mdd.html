@@ -12,11 +12,20 @@
 			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - MDDLoader
 		</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
-			import { MDDLoader } from './jsm/loaders/MDDLoader.js';
+			import { MDDLoader } from 'three/addons/loaders/MDDLoader.js';
 
 			let camera, scene, renderer, mixer, clock;
 
@@ -52,8 +61,6 @@
 					mixer = new THREE.AnimationMixer( mesh );
 					mixer.clipAction( clip ).play(); // use clip
 
-					animate();
-
 				} );
 
 				//
@@ -61,6 +68,7 @@
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
 				document.body.appendChild( renderer.domElement );
 
 				window.addEventListener( 'resize', onWindowResize );
@@ -77,8 +85,6 @@
 			}
 
 			function animate() {
-
-				requestAnimationFrame( animate );
 
 				const delta = clock.getDelta();
 

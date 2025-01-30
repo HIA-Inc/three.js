@@ -11,11 +11,20 @@
 		<div id="container"></div>
 		<div id="info"><a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - buffergeometry - custom VBOs</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
-			import Stats from './jsm/libs/stats.module.js';
+			import Stats from 'three/addons/libs/stats.module.js';
 
 			let container, stats;
 
@@ -35,9 +44,10 @@
 
 				//
 
-				renderer = new THREE.WebGLRenderer( { antialias: false } );
+				renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
 
 				container.appendChild( renderer.domElement );
 
@@ -79,7 +89,7 @@
 					const vy = ( y / n ) + 0.5;
 					const vz = ( z / n ) + 0.5;
 
-					color.setRGB( vx, vy, vz );
+					color.setRGB( vx, vy, vz, THREE.SRGBColorSpace );
 
 					colors.push( color.r, color.g, color.b );
 
@@ -119,9 +129,7 @@
 
 				points = new THREE.Points( geometry, material );
 
-				// Choose one:
-				// geometry.boundingSphere = ( new THREE.Sphere() ).set( new THREE.Vector3(), Infinity );
-				points.frustumCulled = false;
+				geometry.boundingSphere = new THREE.Sphere().set( new THREE.Vector3(), 500 );
 
 				scene.add( points );
 
@@ -149,15 +157,6 @@
 
 			function animate() {
 
-				requestAnimationFrame( animate );
-
-				render();
-				stats.update();
-
-			}
-
-			function render() {
-
 				drawCount = ( Math.max( 5000, drawCount ) + Math.floor( 500 * Math.random() ) ) % particles;
 				points.geometry.setDrawRange( 0, drawCount );
 
@@ -167,6 +166,8 @@
 				points.rotation.y = time * 0.2;
 
 				renderer.render( scene, camera );
+
+				stats.update();
 
 			}
 

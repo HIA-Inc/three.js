@@ -13,24 +13,33 @@
 
 		<div id="info"><a href="https://threejs.org" target="_blank">three.js</a> - fat lines</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/",
+					"stats-gl": "https://cdn.jsdelivr.net/npm/stats-gl@3.6.0/dist/main.js"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
-			import Stats from './jsm/libs/stats.module.js';
-			import { GPUStatsPanel } from './jsm/utils/GPUStatsPanel.js';
+			import Stats from 'stats-gl';
 
-			import { GUI } from './jsm/libs/dat.gui.module.js';
-			import { OrbitControls } from './jsm/controls/OrbitControls.js';
-			import { Line2 } from './jsm/lines/Line2.js';
-			import { LineMaterial } from './jsm/lines/LineMaterial.js';
-			import { LineGeometry } from './jsm/lines/LineGeometry.js';
-			import * as GeometryUtils from './jsm/utils/GeometryUtils.js';
+			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+			import { Line2 } from 'three/addons/lines/Line2.js';
+			import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+			import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+			import * as GeometryUtils from 'three/addons/utils/GeometryUtils.js';
 
 			let line, renderer, scene, camera, camera2, controls;
 			let line1;
 			let matLine, matLineBasic, matLineDashed;
-			let stats, gpuPanel;
+			let stats;
 			let gui;
 
 			// viewport
@@ -38,14 +47,14 @@
 			let insetHeight;
 
 			init();
-			animate();
 
 			function init() {
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setClearColor( 0x000000, 0.0 );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setClearColor( 0x000000, 0.0 );
+				renderer.setAnimationLoop( animate );
 				document.body.appendChild( renderer.domElement );
 
 				scene = new THREE.Scene();
@@ -57,6 +66,7 @@
 				camera2.position.copy( camera.position );
 
 				controls = new OrbitControls( camera, renderer.domElement );
+				controls.enableDamping = true;
 				controls.minDistance = 10;
 				controls.maxDistance = 500;
 
@@ -80,7 +90,7 @@
 					spline.getPoint( t, point );
 					positions.push( point.x, point.y, point.z );
 
-					color.setHSL( t, 1.0, 0.5 );
+					color.setHSL( t, 1.0, 0.5, THREE.SRGBColorSpace );
 					colors.push( color.r, color.g, color.b );
 
 				}
@@ -97,8 +107,7 @@
 					color: 0xffffff,
 					linewidth: 5, // in world units with size attenuation, pixels otherwise
 					vertexColors: true,
-					
-					//resolution:  // to be set by renderer, eventually
+
 					dashed: false,
 					alphaToCoverage: true,
 
@@ -129,12 +138,9 @@
 				window.addEventListener( 'resize', onWindowResize );
 				onWindowResize();
 
-				stats = new Stats();
+				stats = new Stats( { horizontal: false, trackGPU: true } );
+				stats.init( renderer );
 				document.body.appendChild( stats.dom );
-
-				gpuPanel = new GPUStatsPanel( renderer.getContext() );
-				stats.addPanel( gpuPanel );
-				stats.showPanel( 0 );
 
 				initGui();
 
@@ -157,22 +163,15 @@
 
 			function animate() {
 
-				requestAnimationFrame( animate );
-
-				stats.update();
-
 				// main scene
 
 				renderer.setClearColor( 0x000000, 0 );
 
 				renderer.setViewport( 0, 0, window.innerWidth, window.innerHeight );
 
-				// renderer will set this eventually
-				matLine.resolution.set( window.innerWidth, window.innerHeight ); // resolution of the viewport
+				controls.update();
 
-				gpuPanel.startQuery();
 				renderer.render( scene, camera );
-				gpuPanel.endQuery();
 
 				// inset scene
 
@@ -189,12 +188,11 @@
 				camera2.position.copy( camera.position );
 				camera2.quaternion.copy( camera.quaternion );
 
-				// renderer will set this eventually
-				matLine.resolution.set( insetWidth, insetHeight ); // resolution of the inset viewport
-
 				renderer.render( scene, camera2 );
 
 				renderer.setScissorTest( false );
+
+				stats.update();
 
 			}
 
@@ -218,14 +216,14 @@
 
 					switch ( val ) {
 
-						case '0':
+						case 0:
 							line.visible = true;
 
 							line1.visible = false;
 
 							break;
 
-						case '1':
+						case 1:
 							line.visible = false;
 
 							line1.visible = true;
@@ -249,7 +247,7 @@
 
 				} );
 
-				gui.add( param, 'alphaToCoverage' ).onChange( function ( val ) { 
+				gui.add( param, 'alphaToCoverage' ).onChange( function ( val ) {
 
 					matLine.alphaToCoverage = val;
 
@@ -273,7 +271,7 @@
 
 					switch ( val ) {
 
-						case '0':
+						case 0:
 							matLine.dashSize = 2;
 							matLine.gapSize = 1;
 
@@ -282,7 +280,7 @@
 
 							break;
 
-						case '1':
+						case 1:
 							matLine.dashSize = 1;
 							matLine.gapSize = 1;
 
@@ -291,7 +289,7 @@
 
 							break;
 
-						case '2':
+						case 2:
 							matLine.dashSize = 1;
 							matLine.gapSize = 2;
 

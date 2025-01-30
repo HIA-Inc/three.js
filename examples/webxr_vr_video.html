@@ -19,15 +19,23 @@
 			<source src="textures/MaryOculus.mp4">
 		</video>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
-			import { VRButton } from './jsm/webxr/VRButton.js';
+			import * as THREE from 'three';
+			import { VRButton } from 'three/addons/webxr/VRButton.js';
 
 			let camera, scene, renderer;
 
 			init();
-			animate();
 
 			function init() {
 
@@ -47,6 +55,7 @@
 				video.play();
 
 				const texture = new THREE.VideoTexture( video );
+				texture.colorSpace = THREE.SRGBColorSpace;
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0x101010 );
@@ -98,6 +107,7 @@
 				renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
 				renderer.xr.enabled = true;
 				renderer.xr.setReferenceSpaceType( 'local' );
 				container.appendChild( renderer.domElement );
@@ -120,12 +130,6 @@
 			}
 
 			function animate() {
-
-				renderer.setAnimationLoop( render );
-
-			}
-
-			function render() {
 
 				renderer.render( scene, camera );
 

@@ -14,17 +14,26 @@
 			Created by Prashant Sharma and <a href="http://clara.io/" target="_blank" rel="noopener">Ben Houston</a>.
 		</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
-			import Stats from './jsm/libs/stats.module.js';
+			import Stats from 'three/addons/libs/stats.module.js';
 
-			import { GUI } from './jsm/libs/dat.gui.module.js';
-			import { OrbitControls } from './jsm/controls/OrbitControls.js';
-			import { HDRCubeTextureLoader } from './jsm/loaders/HDRCubeTextureLoader.js';
-			import { RGBMLoader } from './jsm/loaders/RGBMLoader.js';
-			import { DebugEnvironment } from './jsm/environments/DebugEnvironment.js';
+			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+			import { HDRCubeTextureLoader } from 'three/addons/loaders/HDRCubeTextureLoader.js';
+			import { RGBMLoader } from 'three/addons/loaders/RGBMLoader.js';
+			import { DebugEnvironment } from 'three/addons/environments/DebugEnvironment.js';
 
 			const params = {
 				envMap: 'HDR',
@@ -41,7 +50,6 @@
 			let ldrCubeMap, hdrCubeMap, rgbmCubeMap;
 
 			init();
-			animate();
 
 			function init() {
 
@@ -55,7 +63,6 @@
 				scene.background = new THREE.Color( 0x000000 );
 
 				renderer = new THREE.WebGLRenderer();
-				renderer.physicallyCorrectLights = true;
 				renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
 				//
@@ -89,7 +96,6 @@
 				const hdrUrls = [ 'px.hdr', 'nx.hdr', 'py.hdr', 'ny.hdr', 'pz.hdr', 'nz.hdr' ];
 				hdrCubeMap = new HDRCubeTextureLoader()
 					.setPath( './textures/cube/pisaHDR/' )
-					.setDataType( THREE.UnsignedByteType )
 					.load( hdrUrls, function () {
 
 						hdrCubeRenderTarget = pmremGenerator.fromCubemap( hdrCubeMap );
@@ -104,19 +110,15 @@
 					.setPath( './textures/cube/pisa/' )
 					.load( ldrUrls, function () {
 
-						ldrCubeMap.encoding = THREE.sRGBEncoding;
-
 						ldrCubeRenderTarget = pmremGenerator.fromCubemap( ldrCubeMap );
 
 					} );
 
 
 				const rgbmUrls = [ 'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png' ];
-				rgbmCubeMap = new RGBMLoader()
+				rgbmCubeMap = new RGBMLoader().setMaxRange( 16 )
 					.setPath( './textures/cube/pisaRGBM16/' )
 					.loadCubemap( rgbmUrls, function () {
-
-						rgbmCubeMap.encoding = THREE.RGBM16Encoding;
 
 						rgbmCubeRenderTarget = pmremGenerator.fromCubemap( rgbmCubeMap );
 
@@ -130,10 +132,10 @@
 
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
 				container.appendChild( renderer.domElement );
 
 				//renderer.toneMapping = ReinhardToneMapping;
-				renderer.outputEncoding = THREE.sRGBEncoding;
 
 				stats = new Stats();
 				container.appendChild( stats.dom );
@@ -150,7 +152,7 @@
 				gui.add( params, 'roughness', 0, 1, 0.01 );
 				gui.add( params, 'metalness', 0, 1, 0.01 );
 				gui.add( params, 'exposure', 0, 2, 0.01 );
-				gui.add( params, 'debug', false );
+				gui.add( params, 'debug' );
 				gui.open();
 
 			}
@@ -168,8 +170,6 @@
 			}
 
 			function animate() {
-
-				requestAnimationFrame( animate );
 
 				stats.begin();
 				render();

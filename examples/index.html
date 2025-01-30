@@ -29,7 +29,7 @@
 
 				<div id="inputWrapper">
 					<input placeholder="" type="text" id="filterInput" autocorrect="off" autocapitalize="off" spellcheck="false" />
-					<div id="exitSearchButton"></div>
+					<div id="clearSearchButton"></div>
 				</div>
 
 				<div id="content">
@@ -49,7 +49,7 @@
 		const content = document.getElementById( 'content' );
 		const viewer = document.getElementById( 'viewer' );
 		const filterInput = document.getElementById( 'filterInput' );
-		const exitSearchButton = document.getElementById( 'exitSearchButton' );
+		const clearSearchButton = document.getElementById( 'clearSearchButton' );
 		const expandButton = document.getElementById( 'expandButton' );
 		const viewSrcButton = document.getElementById( 'button' );
 		const panelScrim = document.getElementById( 'panelScrim' );
@@ -60,15 +60,13 @@
 
 		const links = {};
 		const validRedirects = new Map();
-		const container = document.createElement( 'div' );
+		const fragment = document.createDocumentFragment();
 
 		let selected = null;
 
 		init();
 
 		async function init() {
-
-			content.appendChild( container );
 
 			viewSrcButton.style.display = 'none';
 
@@ -77,19 +75,19 @@
 
 			for ( const key in files ) {
 
-				const section = files[ key ];
+				const category = files[ key ];
 
 				const header = document.createElement( 'h2' );
 				header.textContent = key;
 				header.setAttribute( 'data-category', key );
-				container.appendChild( header );
+				fragment.appendChild( header );
 
-				for ( let i = 0; i < section.length; i ++ ) {
+				for ( let i = 0; i < category.length; i ++ ) {
 
-					const file = section[ i ];
+					const file = category[ i ];
 
-					const link = createLink( file );
-					container.appendChild( link );
+					const link = createLink( file, tags[ file ] );
+					fragment.appendChild( link );
 
 					links[ file ] = link;
 					validRedirects.set( file, file + '.html' );
@@ -97,6 +95,8 @@
 				}
 
 			}
+
+			content.appendChild( fragment );
 
 			if ( window.location.hash !== '' ) {
 
@@ -111,6 +111,13 @@
 					viewer.style.display = 'unset';
 
 				}
+
+			}
+
+			if ( viewer.src === '' ) {
+
+				viewer.srcdoc = document.getElementById( 'PlaceholderHTML' ).innerHTML;
+				viewer.style.display = 'unset';
 
 			}
 
@@ -146,11 +153,11 @@
 
 			};
 
-			exitSearchButton.onclick = function ( ) {
+			clearSearchButton.onclick = function ( ) {
 
 				filterInput.value = '';
 				updateFilter( files, tags );
-				panel.classList.remove( 'searchFocused' );
+				filterInput.focus();
 
 			};
 
@@ -194,15 +201,17 @@
 
 		}
 
-		function createLink( file ) {
+		function createLink( file, tags ) {
+
+			const external = Array.isArray( tags ) && tags.includes( 'external' ) ? ' <span class="tag">external</span>' : '';
 
 			const template = `
 				<div class="card">
-					<a href="${file}.html" target="viewer">
+					<a href="${ file }.html" target="viewer">
 						<div class="cover">
 							<img src="screenshots/${ file }.jpg" loading="lazy" width="400" />
 						</div>
-						<div class="title">${getName( file )}</div>
+						<div class="title">${ getName( file ) }${ external }</div>
 					</a>
 				</div>
 			`;
@@ -242,6 +251,14 @@
 
 		}
 
+		function escapeRegExp( string ) {
+
+			string = string.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ); // https://stackoverflow.com/a/6969486/5250847
+
+			return '(?=.*' + string.split( ' ' ).join( ')(?=.*' ) + ')'; // match all words, in any order
+
+		}
+
 		function updateFilter( files, tags ) {
 
 			let v = filterInput.value.trim();
@@ -257,7 +274,7 @@
 
 			}
 
-			const exp = new RegExp( v, 'gi' );
+			const exp = new RegExp( escapeRegExp( v ), 'gi' );
 
 			for ( const key in files ) {
 
@@ -283,7 +300,7 @@
 
 			if ( search ) {
 
-				let link = sectionLink.href.split( /[?#]/ )[ 0 ];
+				const link = sectionLink.href.split( /[?#]/ )[ 0 ];
 				sectionLink.href = `${link}?q=${search}`;
 
 			} else {
@@ -297,27 +314,16 @@
 		function filterExample( file, exp, tags ) {
 
 			const link = links[ file ];
-			const name = getName( file );
 			if ( file in tags ) file += ' ' + tags[ file ].join( ' ' );
-			const res = file.match( exp );
-			let text;
+			const res = file.replace( /_+/g, ' ' ).match( exp );
 
 			if ( res && res.length > 0 ) {
 
 				link.classList.remove( 'hidden' );
 
-				for ( let i = 0; i < res.length; i ++ ) {
-
-					text = name.replace( res[ i ], '<b>' + res[ i ] + '</b>' );
-
-				}
-
-				link.querySelector( '.title' ).innerHTML = text;
-
 			} else {
 
 				link.classList.add( 'hidden' );
-				link.querySelector( '.title' ).innerHTML = name;
 
 			}
 
@@ -374,7 +380,7 @@
 
 			if ( search.indexOf( '?q=' ) !== - 1 ) {
 
-				return decodeURI( search.substr( 3 ) );
+				return decodeURI( search.slice( 3 ) );
 
 			}
 
@@ -391,6 +397,31 @@
 		}
 
 		</script>
-
+		<template id="PlaceholderHTML">
+			<!DOCTYPE html>
+				<html lang="en">
+					<head>
+						<meta charset="utf-8">
+						<title>three.js examples</title>
+						<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+						<link rel="stylesheet" type="text/css" href="../files/main.css">
+						<style>
+						html, body {
+							height: 100%;
+						}
+						body {
+							height: 100%;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							user-select: none;
+						}
+						</style>
+					</head>
+					<body>
+						Select an example from the sidebar
+					</body>
+				</html>
+		</template>
 	</body>
 </html>

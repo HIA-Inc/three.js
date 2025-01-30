@@ -10,23 +10,31 @@
 
 		<div id="container"></div>
 		<div id="info">
-			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - cubemap customized mipmaps demo. Author <a href="https://github.com/AngusLang" target="_blank">Angus</a><br/>
+			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - cubemap customized mipmaps demo.<br/>
 			Left: webgl generated mipmaps<br/>
 			Right: manual mipmaps<br/>
 		</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
-			import { OrbitControls } from './jsm/controls/OrbitControls.js';
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 			let container;
 
 			let camera, scene, renderer;
 
 			init();
-			animate();
 
 			//load customized cube texture
 			async function loadCubeTextureWithMipmaps() {
@@ -78,6 +86,7 @@
 
 				const customizedCubeTexture = mipmaps.shift();
 				customizedCubeTexture.mipmaps = mipmaps;
+				customizedCubeTexture.colorSpace = THREE.SRGBColorSpace;
 				customizedCubeTexture.minFilter = THREE.LinearMipMapLinearFilter;
 				customizedCubeTexture.magFilter = THREE.LinearFilter;
 				customizedCubeTexture.generateMipmaps = false;
@@ -132,6 +141,7 @@
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
 				container.appendChild( renderer.domElement );
 
 				//controls
@@ -154,7 +164,6 @@
 
 			function animate() {
 
-				requestAnimationFrame( animate );
 				renderer.render( scene, camera );
 
 			}

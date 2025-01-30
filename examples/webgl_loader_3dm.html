@@ -32,29 +32,37 @@
 		</div>
 
 		<div id="loader"></div>
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
-			import { OrbitControls } from './jsm/controls/OrbitControls.js';
-			import { Rhino3dmLoader } from './jsm/loaders/3DMLoader.js';
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+			import { Rhino3dmLoader } from 'three/addons/loaders/3DMLoader.js';
 
-			import { GUI } from './jsm/libs/dat.gui.module.js';
+			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 			let camera, scene, renderer;
 			let controls, gui;
 
 			init();
-			animate();
 
 			function init() {
 
-				THREE.Object3D.DefaultUp = new THREE.Vector3( 0, 0, 1 );
+				THREE.Object3D.DEFAULT_UP.set( 0, 0, 1 );
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.outputEncoding = THREE.sRGBEncoding;
+				renderer.setAnimationLoop( animate );
 				document.body.appendChild( renderer.domElement );
 
 				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
@@ -62,12 +70,13 @@
 
 				scene = new THREE.Scene();
 
-				const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
+				const directionalLight = new THREE.DirectionalLight( 0xffffff, 6 );
 				directionalLight.position.set( 0, 0, 2 );
 				scene.add( directionalLight );
 
 				const loader = new Rhino3dmLoader();
-				loader.setLibraryPath( 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/' );
+				//generally, use this for the Library Path: https://cdn.jsdelivr.net/npm/rhino3dm@8.0.1
+				loader.setLibraryPath( 'jsm/libs/rhino3dm/' );
 				loader.load( 'models/3dm/Rhino_Logo.3dm', function ( object ) {
 
 					scene.add( object );
@@ -75,6 +84,14 @@
 
 					// hide spinner
 					document.getElementById( 'loader' ).style.display = 'none';
+
+				}, function ( progress ) {
+
+					console.log( ( progress.loaded / progress.total * 100 ) + '%' );
+
+				}, function ( error ) {
+
+					console.log( error );
 
 				} );
 
@@ -101,21 +118,16 @@
 				controls.update();
 				renderer.render( scene, camera );
 
-				requestAnimationFrame( animate );
-
 			}
 
 			function initGUI( layers ) {
 
-				gui = new GUI( { width: 300 } );
-
-				const layersControl = gui.addFolder( 'layers' );
-				layersControl.open();
+				gui = new GUI( { title: 'layers' } );
 
 				for ( let i = 0; i < layers.length; i ++ ) {
 
 					const layer = layers[ i ];
-					layersControl.add( layer, 'visible' ).name( layer.name ).onChange( function ( val ) {
+					gui.add( layer, 'visible' ).name( layer.name ).onChange( function ( val ) {
 
 						const name = this.object.name;
 

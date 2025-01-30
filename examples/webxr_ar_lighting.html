@@ -13,19 +13,27 @@
 			(Chrome Android 90+)
 		</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
-			import { RGBELoader } from './jsm/loaders/RGBELoader.js';
-			import { ARButton } from './jsm/webxr/ARButton.js';
-			import { XREstimatedLight } from './jsm/webxr/XREstimatedLight.js';
+			import * as THREE from 'three';
+			import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+			import { ARButton } from 'three/addons/webxr/ARButton.js';
+			import { XREstimatedLight } from 'three/addons/webxr/XREstimatedLight.js';
 
 			let camera, scene, renderer;
 			let controller;
 			let defaultEnvironment;
 
 			init();
-			animate();
 
 			function init() {
 
@@ -45,8 +53,7 @@
 				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.outputEncoding = THREE.sRGBEncoding;
-				renderer.physicallyCorrectLights = true;
+				renderer.setAnimationLoop( animate );
 				renderer.xr.enabled = true;
 				container.appendChild( renderer.domElement );
 
@@ -84,7 +91,6 @@
 				//
 
 				new RGBELoader()
-					.setDataType( THREE.UnsignedByteType )
 					.setPath( 'textures/equirectangular/' )
 					.load( 'royal_esplanade_1k.hdr', function ( texture ) {
 
@@ -103,7 +109,7 @@
 
 				//
 
-				const ballGeometry = new THREE.SphereBufferGeometry( 0.175, 32, 32 );
+				const ballGeometry = new THREE.SphereGeometry( 0.175, 32, 32 );
 				const ballGroup = new THREE.Group();
 				ballGroup.position.z = - 2;
 
@@ -160,12 +166,6 @@
 			//
 
 			function animate() {
-
-				renderer.setAnimationLoop( render );
-
-			}
-
-			function render() {
 
 				renderer.render( scene, camera );
 

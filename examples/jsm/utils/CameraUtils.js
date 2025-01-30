@@ -2,7 +2,7 @@ import {
 	MathUtils,
 	Quaternion,
 	Vector3
-} from '../../../build/three.module.js';
+} from 'three';
 
 const _va = /*@__PURE__*/ new Vector3(), // from pe to pa
 	_vb = /*@__PURE__*/ new Vector3(), // from pe to pb
@@ -18,10 +18,13 @@ const _va = /*@__PURE__*/ new Vector3(), // from pe to pa
  * to exactly frame the corners of an arbitrary rectangle.
  * NOTE: This function ignores the standard parameters;
  * do not call updateProjectionMatrix() after this!
+ *
+ * @param {PerspectiveCamera} camera
  * @param {Vector3} bottomLeftCorner
  * @param {Vector3} bottomRightCorner
  * @param {Vector3} topLeftCorner
- * @param {boolean} estimateViewFrustum */
+ * @param {boolean} [estimateViewFrustum=false]
+ */
 function frameCorners( camera, bottomLeftCorner, bottomRightCorner, topLeftCorner, estimateViewFrustum = false ) {
 
 	const pa = bottomLeftCorner, pb = bottomRightCorner, pc = topLeftCorner;

@@ -13,18 +13,26 @@
 		asset from <a href="https://people.math.sc.edu/Burkardt/data/xyz/xyz.html" target="_blank" rel="noopener">people.math.sc.edu</a> via GNU LGPL
 		</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
-			import { XYZLoader } from './jsm/loaders/XYZLoader.js';
+			import { XYZLoader } from 'three/addons/loaders/XYZLoader.js';
 
 			let camera, scene, renderer, clock;
 
 			let points;
 
 			init();
-			animate();
 
 			function init() {
 
@@ -53,9 +61,10 @@
 
 				//
 
-				renderer = new THREE.WebGLRenderer();
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
 				document.body.appendChild( renderer.domElement );
 
 				//
@@ -74,8 +83,6 @@
 			}
 
 			function animate() {
-
-				requestAnimationFrame( animate );
 
 				const delta = clock.getDelta();
 

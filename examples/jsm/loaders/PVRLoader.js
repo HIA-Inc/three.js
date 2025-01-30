@@ -4,7 +4,7 @@ import {
 	RGBA_PVRTC_4BPPV1_Format,
 	RGB_PVRTC_2BPPV1_Format,
 	RGB_PVRTC_4BPPV1_Format
-} from '../../../build/three.module.js';
+} from 'three';
 
 /*
  *	 PVR v2 (legacy) parser
@@ -160,7 +160,7 @@ function _parseV2( pvrDatas ) {
 	pvrDatas.numMipmaps = numMipmaps + 1;
 
 	// guess cubemap type seems tricky in v2
-	// it juste a pvr containing 6 surface (no explicit cubemap type)
+	// it's just a pvr containing 6 surface (no explicit cubemap type)
 	pvrDatas.isCubemap 	= ( numSurfs === 6 );
 
 	return _extract( pvrDatas );

@@ -52,13 +52,22 @@
 
 		</script>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
-			import Stats from './jsm/libs/stats.module.js';
+			import Stats from 'three/addons/libs/stats.module.js';
 
-			import * as BufferGeometryUtils from './jsm/utils/BufferGeometryUtils.js';
+			import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 			let renderer, scene, camera, stats;
 
@@ -70,7 +79,6 @@
 			let pointer, INTERSECTED;
 
 			init();
-			animate();
 
 			function init() {
 
@@ -85,7 +93,7 @@
 
 				let boxGeometry = new THREE.BoxGeometry( 200, 200, 200, 16, 16, 16 );
 
-				// if normal and uv attributes are not removed, mergeVertices() can't consolidate indentical vertices with different normal/uv data
+				// if normal and uv attributes are not removed, mergeVertices() can't consolidate identical vertices with different normal/uv data
 
 				boxGeometry.deleteAttribute( 'normal' );
 				boxGeometry.deleteAttribute( 'uv' );
@@ -139,6 +147,7 @@
 				renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
 				container.appendChild( renderer.domElement );
 
 				//
@@ -175,8 +184,6 @@
 			}
 
 			function animate() {
-
-				requestAnimationFrame( animate );
 
 				render();
 				stats.update();

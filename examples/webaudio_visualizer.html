@@ -51,9 +51,18 @@
 			music by <a href="http://www.newgrounds.com/audio/listen/376737" target="_blank" rel="noopener">skullbeatz</a>
 		</div>
 
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
-			import * as THREE from '../build/three.module.js';
+			import * as THREE from 'three';
 
 			let scene, camera, renderer, analyser, uniforms;
 
@@ -72,12 +81,6 @@
 				//
 
 				const container = document.getElementById( 'container' );
-
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.setClearColor( 0x000000 );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				container.appendChild( renderer.domElement );
 
 				scene = new THREE.Scene();
 
@@ -113,11 +116,9 @@
 
 				//
 
-				const format = ( renderer.capabilities.isWebGL2 ) ? THREE.RedFormat : THREE.LuminanceFormat;
-
 				uniforms = {
 
-					tAudioData: { value: new THREE.DataTexture( analyser.data, fftSize / 2, 1, format ) }
+					tAudioData: { value: new THREE.DataTexture( analyser.data, fftSize / 2, 1, THREE.RedFormat ) }
 
 				};
 
@@ -136,9 +137,15 @@
 
 				//
 
-				window.addEventListener( 'resize', onWindowResize );
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
+				container.appendChild( renderer.domElement );
 
-				animate();
+				//
+
+				window.addEventListener( 'resize', onWindowResize );
 
 			}
 
@@ -149,14 +156,6 @@
 			}
 
 			function animate() {
-
-				requestAnimationFrame( animate );
-
-				render();
-
-			}
-
-			function render() {
 
 				analyser.getFrequencyData();
 
