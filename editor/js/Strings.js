@@ -756,7 +756,6 @@ fa: {
 			'sidebar/material/depthtest': 'Depth Test',
 			'sidebar/material/depthwrite': 'Depth Write',
 			'sidebar/material/wireframe': 'Wireframe',
-			'sidebar/material/mapFormat': 'Map Format',
 			'sidebar/material/userdata': 'User data',
 			'sidebar/material/export': 'Export JSON',
 
