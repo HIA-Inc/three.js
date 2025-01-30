@@ -26,7 +26,7 @@ export class CustomMaterialLoader {
     let textures = {};
     if (json.images != null && json.images.length > 0) {
       let images = await objectLoader.parseImagesAsync(json.images);
-      textures = objectLoader.parseTextures(json.textures, images);
+      textures = objectLoader.parseTextures(json.textures.filter((texture) => texture.image != null), images);
     }
 
     let materialLoader = new THREE.MaterialLoader();

@@ -87,7 +87,7 @@ class MaterialFileExporter {
 			let materialNames = Object.keys(materialContents.materials).sort();
 			for (let materialName of materialNames) {
 				let material = materialContents.materials[materialName];
-				for (let image of material["images"]) {
+				for (let image of material["images"] ?? []) {
 					let imageUrlElements = image.url.split(",");
 					if (imageUrlElements.length == 2) {
 						let imageElements = image.url.split(",");

@@ -401,7 +401,7 @@ function MenubarFile( editor ) {
 		let filename = input.name.replace(/\.[^/.]+$/, "");
 
 		exporter.convertToZip(contents, filename + ".mat").then((content) => {
-			save(content, filename + ".zip");
+			editor.utils.save(content, filename + ".zip");
 		});
 
 	} );
