@@ -39,9 +39,10 @@ function MenubarStatus( editor ) {
 
 	} );
 
-	const version = new UIText( 'r' + THREE.REVISION );
+	const version = new UIText( 'r' + THREE.REVISION + " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MATERIAL EXPORTER EXPERIMENTAL VERSION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	version.setClass( 'title' );
-	version.setOpacity( 0.5 );
+	version.setOpacity( 1.0 );
+	version.setColor( '#ffff00' );
 	container.add( version );
 
 	return container;
