@@ -208,7 +208,7 @@ function MenubarFile( editor ) {
 	} );
 	options.add( option );
 
-	// Import Material
+	// Import Material (File)
 
 	let formMat = document.createElement( 'form' );
 	formMat.style.display = 'none';
@@ -236,6 +236,40 @@ function MenubarFile( editor ) {
 	option.onClick( function () {
 
 		fileInputMat.click();
+
+	} );
+	options.add( option );
+
+	// Import Material (Folder)
+
+	let formMatFolder = document.createElement( 'form' );
+	formMatFolder.style.display = 'none';
+	document.body.appendChild( formMatFolder );
+
+	let folderInputMat = document.createElement( 'input' );
+	folderInputMat.multiple = false;
+	folderInputMat.type = 'file';
+	folderInputMat.webkitdirectory = true;
+	folderInputMat.mozdirectory = true;
+
+	folderInputMat.addEventListener( 'change', async function () {
+
+		let manager = new THREE.LoadingManager();
+		let { MaterialFileLoader } = await import( '../../examples/jsm/loaders/MaterialFileLoader.js' );
+		let materialFileLoader = new MaterialFileLoader(manager);
+		materialFileLoader.loadFolder(folderInputMat.files, editor.scene);
+
+		form.reset();
+
+	} );
+	form.appendChild( folderInputMat );
+
+	option = new UIRow();
+	option.setClass( 'option' );
+	option.setTextContent( strings.getKey( 'menubar/file/import/materialFolder' ) );
+	option.onClick( function () {
+
+		folderInputMat.click();
 
 	} );
 	options.add( option );

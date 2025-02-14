@@ -60,6 +60,47 @@ class MaterialFileLoader extends Loader {
 			fileReader.readAsText(materialFile);
 		}
 	}
+
+	loadFolder(materialFiles, object) {
+		let files = Array.from(materialFiles);
+		let matFiles = files.filter(file => !file.dir && file.name.split('.').pop() == "mat");
+
+		if (matFiles.length == 1) {
+			let matFile = matFiles[0];
+
+			let fileReader = new FileReader();
+			fileReader.readAsText(matFile);
+			fileReader.onload = (event) => {
+				let matData = JSON.parse(fileReader.result);
+				let imageFiles = files.filter(file => !file.dir && file.webkitRelativePath.includes("images/"));
+
+				let imagesBase64Promise = imageFiles.map((imageFile) => {
+					return new Promise(resolve => {
+						let imageFileReader = new FileReader();
+						imageFileReader.readAsDataURL(imageFile);
+						imageFileReader.onload = (event) => {
+							let imageBase64 = imageFileReader.result;
+							resolve({
+								"name": imageFile.name,
+								"base64Url": imageBase64
+							});
+						};
+					});
+				});
+
+				Promise.all(imagesBase64Promise).then((imagesBase64) => {
+					let json = CustomMaterialLoader.preprocessMaterialData(matData, imagesBase64);
+					this.parse(json, object);
+				});
+			};
+		}
+		else if (matFiles.length > 1) {
+			console.error("The material folder file should not contain more than 1 mat file");
+		}
+		else {
+			console.error("The material folder doesn't contain a .mat file");
+		}
+	}
 	
 	getUrlPrefix(imageFileName) {
 		let extension = imageFileName.split('.').pop();
