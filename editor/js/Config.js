@@ -17,8 +17,8 @@ function Config() {
 
 		'project/renderer/antialias': true,
 		'project/renderer/shadows': true,
-		'project/renderer/shadowType': 1, // PCF
-		'project/renderer/toneMapping': 0, // NoToneMapping
+		'project/renderer/shadowType': 2, // PCFSoft
+		'project/renderer/toneMapping': 1, // LinearToneMapping
 		'project/renderer/toneMappingExposure': 1,
 
 		'settings/history': false,
